@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Shopping Bot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .results {
+            margin-top: 20px;
+        }
+        .product {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px auto;
+            max-width: 300px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Voice Shopping Bot</h1>
+    <button id="voiceButton">Speak to Search</button>
+    <div class="results" id="results"></div>
+
+    <script>
+        document.getElementById("voiceButton").addEventListener("click", async () => {
+            const response = await fetch("/voice_search", { method: "POST" });
+            const data = await response.json();
+
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = `<h2>Results for: ${data.query}</h2>`;
+
+            if (data.products.length > 0) {
+                data.products.forEach(product => {
+                    resultsDiv.innerHTML += `
+                        <div class="product">
+                            <h3>${product.title}</h3>
+                            <p>Price: $${product.price}</p>
+                            <img src="${product.image}" alt="${product.title}" width="100">
+                        </div>
+                    `;
+                });
+            } else {
+                resultsDiv.innerHTML += "<p>No products found.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
